@@ -1,0 +1,20 @@
+# CLAUDE.local.md (template)
+
+> This file is gitignored. Copy to `CLAUDE.local.md` (without `.template`) and customize.
+> Anything here is personal to you and won't be shared with the team.
+
+## My current focus
+
+(What you're working on this week. Update freely.)
+
+## Personal shortcuts
+
+(Commands you run often, file paths you open often, etc.)
+
+## Things to remember
+
+(Notes for yourself across sessions — don't put team-relevant info here, that goes in `CLAUDE.md`.)
+
+## Models I prefer
+
+(If you've configured Claude Code with specific models, note them here.)

@@ -1,0 +1,86 @@
+# Node
+node_modules/
+.next/
+.turbo/
+out/
+dist/
+build/
+*.tsbuildinfo
+.eslintcache
+.npm/
+.pnpm-store/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+.uv/
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+*.cover
+
+# Environment
+.env
+.env.*
+!.env.example
+.envrc
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Data (large, sensitive, regeneratable)
+data/datasets/
+data/feature-store/
+data/model-registry/
+data/checkpoints/
+data/raw/
+*.csv
+*.parquet
+*.feather
+*.db
+*.sqlite
+*.sqlite3
+
+# Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# Docker
+docker-compose.override.local.yml
+
+# Local notes (Claude Code personal)
+CLAUDE.local.md
+.claude/.local/
+.claude/sessions/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets that sometimes leak
+*.pem
+*.key
+*.crt
+secrets/
+.secrets/
+
+# Generated
+*.tar.gz
+*.zip

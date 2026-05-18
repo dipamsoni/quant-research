@@ -1,0 +1,13 @@
+# Default reviewers
+* @your-github-handle
+
+# Service-specific (uncomment + customize as team grows)
+# /apps/web/                       @frontend-team
+# /services/api-gateway/           @backend-team
+# /services/market-data-service/   @data-team
+# /services/prediction-service/    @ml-team
+# /services/agent-service/         @ai-team
+# /services/rl-service/            @ml-team
+# /infra/                          @infra-team
+# /docs/                           @your-github-handle
+# /.claude/                        @your-github-handle
