@@ -43,12 +43,12 @@ def create_access_token(
         "role": role,
         "exp": expire,
     }
-    return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
+    return jwt.encode(payload, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)  # type: ignore[no-any-return]
 
 
 def decode_access_token(token: str, *, verify_exp: bool = True) -> dict:  # type: ignore[type-arg]
     options: dict[str, bool] = {} if verify_exp else {"verify_exp": False}
-    return jwt.decode(  # type: ignore[return-value]
+    return jwt.decode(  # type: ignore[no-any-return]
         token,
         settings.JWT_SECRET,
         algorithms=[settings.JWT_ALGORITHM],

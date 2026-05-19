@@ -78,4 +78,4 @@ async def get_current_user(
             detail={"code": "UNAUTHORIZED", "message": "User not found or inactive"},
         )
 
-    return user  # type: ignore[return-value]
+    return user
