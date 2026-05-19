@@ -12,13 +12,10 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,md,json,yaml,yml}\"",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
-    "clean": "turbo clean && rimraf node_modules",
-    "prepare": "husky || true"
+    "clean": "turbo clean && rimraf node_modules"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "husky": "^9.1.0",
-    "lint-staged": "^15.2.0",
     "prettier": "^3.3.0",
     "prettier-plugin-tailwindcss": "^0.6.0",
     "rimraf": "^6.0.0",
@@ -28,17 +25,5 @@
   "engines": {
     "node": ">=20",
     "pnpm": ">=9"
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "prettier --write"
-    ],
-    "*.{md,json,yaml,yml}": [
-      "prettier --write"
-    ],
-    "services/**/*.py": [
-      "uv run --directory services/api-gateway ruff check --fix",
-      "uv run --directory services/api-gateway ruff format"
-    ]
   }
 }
