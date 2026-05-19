@@ -93,6 +93,12 @@ jobs:
         working-directory: services/api-gateway
         run: uv run mypy app
 
+      - name: Migrate DB
+        working-directory: services/api-gateway
+        env:
+          DATABASE_URL: postgresql+asyncpg://quantos:quantos_test@localhost:5432/quantos_test
+        run: uv run alembic upgrade head
+
       - name: Tests
         working-directory: services/api-gateway
         env:
@@ -119,6 +125,7 @@ jobs:
       - name: Build web image
         uses: docker/build-push-action@v6
         with:
-          context: apps/web
+          context: .
+          file: apps/web/Dockerfile
           push: false
           tags: quantos/web:ci
