@@ -1,16 +1,18 @@
+from typing import Any
+
 from sqlalchemy.types import UserDefinedType
 
 
-class CIText(UserDefinedType):
+class CIText(UserDefinedType[str]):
     """PostgreSQL CITEXT — case-insensitive text. Requires citext extension."""
 
     cache_ok = True
 
-    def get_col_spec(self, **kw):
+    def get_col_spec(self, **kw: Any) -> str:
         return "CITEXT"
 
-    def bind_processor(self, dialect):
+    def bind_processor(self, dialect: Any) -> None:
         return None
 
-    def result_processor(self, dialect, coltype):
+    def result_processor(self, dialect: Any, coltype: Any) -> None:
         return None

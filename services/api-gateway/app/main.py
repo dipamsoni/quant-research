@@ -1,3 +1,4 @@
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Any
 
@@ -17,7 +18,7 @@ logger = structlog.get_logger()
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):  # type: ignore[type-arg]
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info("startup", environment=settings.ENVIRONMENT, version=settings.VERSION)
     await init_redis()
     yield
