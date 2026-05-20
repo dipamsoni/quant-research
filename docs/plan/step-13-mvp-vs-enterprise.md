@@ -80,7 +80,7 @@ PostgreSQL + Redis
 ML modules (imported, not separate processes)
 ```
 
-You **don't** need separate processes per service until Phase 7+. Logical boundaries (folder structure) is enough.
+Each service (market-data, portfolio, prediction, backtesting, agent) runs as its own process from Phase 2 onward. api-gateway proxies all. Logical boundaries enforced by separate `services/<name>/` directories with own DB migrations and ports.
 
 ## Don't build during MVP
 

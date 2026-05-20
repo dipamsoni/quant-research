@@ -18,7 +18,7 @@
 ## Task list
 
 ### Week 1: Service + schema
-- [ ] `services/portfolio-service/` scaffold (or as a router in api-gateway for MVP)
+- [ ] `services/portfolio-service/` scaffold as standalone service (same layout as market-data-service; own DB, own Alembic env, own port)
 - [ ] Tables: `portfolios`, `holdings`, `transactions`, `portfolio_metrics`
 - [ ] Alembic migration
 

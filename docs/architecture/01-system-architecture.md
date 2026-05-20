@@ -2,16 +2,18 @@
 
 > Living document. Update as services come online.
 
-## Current state (Phase 1)
+## Current state (Phase 3)
 
 ```
-┌──────────────┐     ┌────────────────┐     ┌────────────┐
-│  Next.js     │────▶│  FastAPI       │────▶│  Postgres  │
-│  apps/web    │     │  api-gateway   │     │  + Redis   │
-└──────────────┘     └────────────────┘     └────────────┘
+┌──────────────┐     ┌────────────────┐     ┌─────────────────────┐     ┌────────────┐
+│  Next.js     │────▶│  api-gateway   │────▶│  market-data :8001  │────▶│  Postgres  │
+│  apps/web    │     │  :8000         │     │  portfolio   :8002  │     │  (TimescaleDB)│
+└──────────────┘     └────────────────┘     └─────────────────────┘     ├────────────┤
+                                                                          │  Redis :6379│
+                                                                          └────────────┘
 ```
 
-Single FastAPI process, single Next.js process, managed Postgres + Redis.
+api-gateway proxies all frontend traffic. Each service owns its DB tables + Alembic migrations.
 
 ## Target state (Phase 11+)
 
@@ -24,8 +26,8 @@ Even when running as a near-monolith in MVP, organize code by service:
 ```
 services/
 ├── api-gateway/           # always its own process
-├── market-data-service/   # could be folded into gateway in MVP
-├── portfolio-service/     # could be folded into gateway in MVP
+├── market-data-service/   # standalone service (port 8001)
+├── portfolio-service/     # standalone service (port 8002)
 ├── prediction-service/    # split out when ML inference latency matters
 ├── backtesting-service/   # split out when backtests block other work
 ├── agent-service/         # split out for separate scaling
