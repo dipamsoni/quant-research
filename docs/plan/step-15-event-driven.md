@@ -70,8 +70,8 @@ Always structured. Always versioned.
   "timestamp": "2026-05-10T10:00:00Z",
   "source": "market-data-service",
   "payload": {
-    "symbol": "AAPL",
-    "price": 220.45,
+    "symbol": "RELIANCE",
+    "price": 2850.45,
     "volume": 1200
   }
 }

@@ -40,7 +40,7 @@
 - [ ] `app/pipelines/realtime_pipeline.py` — connect to provider WS, write live candles
 - [ ] Background scheduler (APScheduler or simple asyncio task) to refresh daily data nightly
 - [ ] Deduplication via primary key `(time, asset_id, timeframe)`
-- [ ] Symbol seeding: import top 500 US stocks + top 50 crypto from a static list
+- [ ] Symbol seeding: import Nifty 500 Indian stocks (NSE, INR) + top 50 crypto from a static list
 
 ### Week 2: API + WebSocket
 
@@ -52,7 +52,7 @@
 - [ ] `GET /api/v1/market/news?symbol=` — news headlines
 
 #### 2.5 WebSocket gateway
-- [ ] `WS /ws/prices?symbols=AAPL,TSLA,BTCUSDT`
+- [ ] `WS /ws/prices?symbols=RELIANCE,TCS,BTCUSDT`
 - [ ] Connection manager (per-client subscription tracking)
 - [ ] On price update: broadcast to subscribed clients only
 - [ ] Heartbeat every 30s; close stale connections

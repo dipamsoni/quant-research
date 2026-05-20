@@ -29,7 +29,7 @@ _SEED_FILE = Path(__file__).parent / "assets_seed_data.json"
 
 
 async def main() -> None:
-    raw = json.loads(_SEED_FILE.read_text(encoding="utf-8"))
+    raw = json.loads(_SEED_FILE.read_bytes().decode("utf-8", errors="replace"))
     assets: list[dict] = raw["assets"]
     logger.info("seed_start", total=len(assets), source=str(_SEED_FILE))
 

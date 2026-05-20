@@ -58,7 +58,7 @@ Query: `search`, `asset_type`, `cursor`, `limit`
 ```json
 {
   "success": true,
-  "data": [{ "id": "...", "symbol": "AAPL", "name": "Apple Inc.", "asset_type": "stock", "exchange": "NASDAQ" }],
+  "data": [{ "id": "...", "symbol": "RELIANCE", "name": "Reliance Industries Ltd.", "asset_type": "stock", "exchange": "NSE" }],
   "pagination": { "next_cursor": "...", "has_more": true }
 }
 ```
@@ -79,10 +79,10 @@ Query: `symbol`, `timeframe` (1m|5m|1h|1d|1w), `start`, `end`
 
 ### GET /api/v1/market/price/{symbol}
 ```json
-{ "success": true, "data": { "symbol": "AAPL", "price": 220.45, "as_of": "..." } }
+{ "success": true, "data": { "symbol": "RELIANCE", "price": 2850.45, "as_of": "..." } }
 ```
 
-### GET /api/v1/market/news?symbol=AAPL
+### GET /api/v1/market/news?symbol=RELIANCE
 ```json
 {
   "success": true,
@@ -92,11 +92,11 @@ Query: `symbol`, `timeframe` (1m|5m|1h|1d|1w), `start`, `end`
 }
 ```
 
-### WS /ws/prices?symbols=AAPL,TSLA
+### WS /ws/prices?symbols=RELIANCE,TCS
 - Auth via `Authorization` header on handshake (or `?token=` query if browser limitations)
 - Server pushes:
   ```json
-  { "type": "tick", "symbol": "AAPL", "price": 220.45, "ts": "..." }
+  { "type": "tick", "symbol": "RELIANCE", "price": 2850.45, "ts": "..." }
   ```
 - Heartbeat: server sends `{"type":"ping"}` every 30s; client replies `{"type":"pong"}`
 
@@ -105,7 +105,7 @@ Query: `symbol`, `timeframe` (1m|5m|1h|1d|1w), `start`, `end`
 ### POST /api/v1/portfolio
 ```json
 // Request
-{ "name": "Long Term", "base_currency": "USD", "risk_profile": "moderate" }
+{ "name": "Long Term", "base_currency": "INR", "risk_profile": "moderate" }
 ```
 
 ### GET /api/v1/portfolio
@@ -137,13 +137,13 @@ Current allocation breakdown.
 ### POST /api/v1/ml/predict-price
 ```json
 // Request
-{ "symbol": "AAPL", "horizon_days": 1 }
+{ "symbol": "RELIANCE", "horizon_days": 1 }
 
 // Response
 {
   "success": true,
   "data": {
-    "symbol": "AAPL",
+    "symbol": "RELIANCE",
     "predicted_return": 0.012,
     "confidence": 0.71,
     "model": "next_day_return_xgb_v1",
@@ -157,7 +157,7 @@ Current allocation breakdown.
 {
   "success": true,
   "data": [
-    { "id": "...", "symbol": "AAPL", "action": "BUY", "confidence": 0.78, "target_return": 0.015, "generated_at": "..." }
+    { "id": "...", "symbol": "RELIANCE", "action": "BUY", "confidence": 0.78, "target_return": 0.015, "generated_at": "..." }
   ]
 }
 ```
@@ -170,7 +170,7 @@ Current allocation breakdown.
 {
   "strategy_id": "...",   // or inline:
   "strategy_code": "...",
-  "symbols": ["AAPL", "MSFT"],
+  "symbols": ["RELIANCE", "TCS"],
   "start": "2024-01-01",
   "end": "2026-01-01",
   "initial_capital": 100000,
@@ -208,7 +208,7 @@ Current allocation breakdown.
 Streaming response (SSE).
 ```json
 // Request
-{ "conversation_id": "...|null", "message": "What's driving AAPL today?" }
+{ "conversation_id": "...|null", "message": "What's driving RELIANCE today?" }
 
 // Streamed events:
 event: token       data: "Apple"

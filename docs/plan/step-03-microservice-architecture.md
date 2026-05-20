@@ -75,7 +75,7 @@ Don't have services call each other with raw `requests.get(...)`. Build typed SD
 
 ```python
 from sdk.market import MarketSDK
-prices = await MarketSDK().get_candles("AAPL", "1d")
+prices = await MarketSDK().get_candles("RELIANCE", "1d")
 ```
 
 This makes refactoring vastly easier when service boundaries shift.

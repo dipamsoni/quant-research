@@ -72,5 +72,5 @@
 - **Look-ahead bias.** Features at time t must only use data available at t. Walk-forward CV.
 - **Survivorship bias.** Don't train only on currently-listed stocks; that biases performance up.
 - **Optimizing R² instead of Sharpe.** A model that predicts direction with 51% accuracy beats one with high R² that predicts wrong direction.
-- **Ignoring transaction costs.** Always evaluate net of plausible costs (5–10 bps for liquid US stocks).
-- **No baseline comparison.** Always compare to "buy and hold SPY" and "always predict yesterday's return".
+- **Ignoring transaction costs.** Always evaluate net of plausible costs (15–30 bps for liquid NSE stocks; STT + brokerage).
+- **No baseline comparison.** Always compare to "buy and hold Nifty 50 index" and "always predict yesterday's return".

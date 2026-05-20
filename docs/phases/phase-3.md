@@ -10,9 +10,9 @@
 - [ ] User can create multiple portfolios
 - [ ] User can record buy/sell transactions
 - [ ] System computes: total value, cost basis, unrealized PnL, realized PnL, daily return
-- [ ] System computes risk metrics: Sharpe ratio, max drawdown, volatility, beta vs SPY
+- [ ] System computes risk metrics: Sharpe ratio, max drawdown, volatility, beta vs Nifty 50
 - [ ] Allocation pie chart by asset and sector
-- [ ] Performance line chart vs benchmark (SPY)
+- [ ] Performance line chart vs benchmark (Nifty 50)
 - [ ] Holdings table is sortable, virtualized, exportable to CSV
 
 ## Task list
@@ -41,7 +41,7 @@
 - [ ] `/portfolio` route with portfolio selector
 - [ ] Summary cards (total value, daily return, Sharpe, drawdown, cash)
 - [ ] Allocation pie chart (Tremor or Recharts)
-- [ ] Performance line chart (Recharts) vs SPY
+- [ ] Performance line chart (Recharts) vs Nifty 50
 - [ ] Holdings table (TanStack Table with virtualization)
 - [ ] Add transaction modal
 - [ ] CSV export
@@ -56,6 +56,6 @@
 ## Common pitfalls
 
 - **Wrong PnL on shorts.** Make sure your formula handles negative quantity correctly.
-- **Beta computed against wrong benchmark.** Use SPY consistently; let users override later.
+- **Beta computed against wrong benchmark.** Use Nifty 50 consistently; let users override later.
 - **Metrics computed in API request.** Move to background job; cache in `portfolio_metrics`.
 - **Stale prices.** Use the latest price from market-data, not a stale snapshot.

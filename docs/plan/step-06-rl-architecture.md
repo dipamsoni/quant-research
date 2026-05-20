@@ -121,7 +121,7 @@ Don't let RL execute unconstrained:
 RL Action → Risk Engine → Validated Action → Execution
 ```
 
-If RL wants 100% TSLA, risk engine reduces to 25%.
+If RL wants 100% RELIANCE, risk engine reduces to 25%.
 
 ## Offline RL (advanced)
 

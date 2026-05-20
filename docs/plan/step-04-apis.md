@@ -43,7 +43,7 @@ GET    /api/v1/market/assets/{symbol}
 GET    /api/v1/market/candles            ?symbol&timeframe&start&end
 GET    /api/v1/market/price/{symbol}
 GET    /api/v1/market/news               ?symbol
-WS     /ws/prices                        ?symbols=AAPL,TSLA
+WS     /ws/prices                        ?symbols=RELIANCE,TCS
 ```
 
 ### Phase 3: Portfolio

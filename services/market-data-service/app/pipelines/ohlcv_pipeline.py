@@ -25,7 +25,6 @@ logger = structlog.get_logger()
 _YF_SEMAPHORE = asyncio.Semaphore(5)
 
 # Expected interval in seconds per canonical timeframe.
-# Gap threshold depends on asset type (crypto = 24/7, equity = market-hours).
 _EXPECTED_SECONDS: dict[str, int] = {
     "1m": 60,
     "5m": 300,
@@ -37,15 +36,25 @@ _EXPECTED_SECONDS: dict[str, int] = {
     "1w": 604800,
 }
 
-# For intraday equity timeframes, overnight + weekend gaps are normal.
-# Use 36 h so we skip overnight gaps (~16 h) but still flag multi-day outages.
-# Crypto uses the standard 3× multiplier (24/7 market, any gap is anomalous).
+# For intraday equity timeframes, overnight gaps (~16 h NST) + weekends are normal.
+# Use 36 h so overnight gaps are skipped but multi-day outages are caught.
+# Crypto is 24/7 — any gap exceeding 3× the expected interval is anomalous.
 _EQUITY_INTRADAY_THRESHOLD_SECONDS = 36 * 3600
 _INTRADAY_TIMEFRAMES = {"1m", "5m", "15m", "30m", "1h", "4h"}
 
+# NSE market calendar for calendar-aware daily gap detection.
+# Falls back to time-based detection if pandas_market_calendars is unavailable.
+try:
+    import pandas_market_calendars as mcal
+    _NSE_CALENDAR = mcal.get_calendar("NSE")
+    _CALENDAR_AVAILABLE = True
+except Exception:
+    _NSE_CALENDAR = None  # type: ignore[assignment]
+    _CALENDAR_AVAILABLE = False
+
 
 def _gap_threshold(timeframe: str, asset_type: str) -> int:
-    """Return gap threshold in seconds for this timeframe + asset type."""
+    """Return gap threshold in seconds for intraday/crypto (time-based fallback)."""
     expected = _EXPECTED_SECONDS.get(timeframe)
     if expected is None:
         return 0
@@ -54,34 +63,79 @@ def _gap_threshold(timeframe: str, asset_type: str) -> int:
     return expected * 3
 
 
+def _has_missing_nse_sessions(prev_time: datetime, curr_time: datetime) -> tuple[bool, int]:
+    """Return (is_gap, missing_session_count) using the NSE calendar.
+
+    A gap exists when NSE had trading sessions between the two candle timestamps
+    that are not represented in the data.
+    """
+    if not _CALENDAR_AVAILABLE or _NSE_CALENDAR is None:
+        return False, 0
+    check_start = (prev_time + timedelta(days=1)).date()
+    check_end = (curr_time - timedelta(days=1)).date()
+    if check_start > check_end:
+        return False, 0
+    try:
+        schedule = _NSE_CALENDAR.schedule(
+            start_date=check_start.isoformat(),
+            end_date=check_end.isoformat(),
+        )
+        count = len(schedule)
+        return count > 0, count
+    except Exception:
+        return False, 0
+
+
 def _detect_gaps(
     candles: list[OHLCVCandleSchema],
     timeframe: str,
     symbol: str,
-    asset_type: str = "equity",
+    asset_type: str = "stock",
 ) -> int:
-    """Log WARNING for gaps exceeding threshold. Returns gap count."""
+    """Log WARNING for data gaps. Returns gap count.
+
+    Daily equity candles use NSE calendar awareness so public holidays and
+    weekends are never flagged as gaps. All other combinations fall back to
+    a simple time-threshold approach.
+    """
     if len(candles) < 2:
         return 0
-    threshold = _gap_threshold(timeframe, asset_type)
-    if threshold == 0:
-        return 0
+
     sorted_candles = sorted(candles, key=lambda c: c.time)
     gap_count = 0
+    use_calendar = timeframe == "1d" and asset_type != "crypto" and _CALENDAR_AVAILABLE
+
     for prev, curr in zip(sorted_candles, sorted_candles[1:]):
-        delta = (curr.time - prev.time).total_seconds()
-        if delta > threshold:
-            gap_count += 1
-            logger.warning(
-                "ohlcv_gap_detected",
-                symbol=symbol,
-                timeframe=timeframe,
-                asset_type=asset_type,
-                gap_start=prev.time.isoformat(),
-                gap_end=curr.time.isoformat(),
-                gap_seconds=int(delta),
-                threshold_seconds=threshold,
-            )
+        if use_calendar:
+            is_gap, missing_sessions = _has_missing_nse_sessions(prev.time, curr.time)
+            if is_gap:
+                gap_count += 1
+                logger.warning(
+                    "ohlcv_gap_detected",
+                    symbol=symbol,
+                    timeframe=timeframe,
+                    asset_type=asset_type,
+                    gap_start=prev.time.isoformat(),
+                    gap_end=curr.time.isoformat(),
+                    missing_sessions=missing_sessions,
+                )
+        else:
+            threshold = _gap_threshold(timeframe, asset_type)
+            if threshold == 0:
+                continue
+            delta = (curr.time - prev.time).total_seconds()
+            if delta > threshold:
+                gap_count += 1
+                logger.warning(
+                    "ohlcv_gap_detected",
+                    symbol=symbol,
+                    timeframe=timeframe,
+                    asset_type=asset_type,
+                    gap_start=prev.time.isoformat(),
+                    gap_end=curr.time.isoformat(),
+                    gap_seconds=int(delta),
+                    threshold_seconds=threshold,
+                )
     return gap_count
 
 

@@ -47,7 +47,7 @@ class TradingEnvironment(gym.Env):
 | Tier | Components |
 |------|-----------|
 | MVP | OHLCV (last N bars), 5 indicators (RSI, MACD, BB, ATR, momentum), position (long/short/flat), cash ratio |
-| Intermediate | + sentiment score, regime label, sector return, correlation to SPY |
+| Intermediate | + sentiment score, regime label, sector return, correlation to Nifty 50 |
 | Advanced | + order book features, factor exposures, news embeddings, agent memory state |
 
 Normalize all features (z-score or min-max). Unnormalized inputs destroy training.
@@ -108,7 +108,7 @@ Don't tune hyperparameters on the final test set.
 ## Evaluation
 
 Compare ALWAYS against baselines:
-- Buy-and-hold SPY
+- Buy-and-hold Nifty 50 index
 - Buy-and-hold the asset
 - Random actions
 - Simple momentum (12-1)

@@ -112,7 +112,7 @@ CREATE TABLE portfolios (
   id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id       UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   name          TEXT NOT NULL,
-  base_currency TEXT NOT NULL DEFAULT 'USD',
+  base_currency TEXT NOT NULL DEFAULT 'INR',
   risk_profile  TEXT,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );

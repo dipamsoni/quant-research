@@ -63,8 +63,8 @@
 
 ## Pitfalls
 
-- **No transaction costs.** Default to 5 bps for stocks, 10 bps for crypto. Show user the slider.
+- **No transaction costs.** Default to 15 bps for NSE stocks (covers STT + brokerage), 10 bps for crypto. Show user the slider.
 - **No slippage.** Default to 5 bps; more for low-liquidity.
 - **Best-fit overfitting.** Show out-of-sample Sharpe separately from in-sample.
 - **Ignoring drawdown periods.** A 30% Sharpe-2 strategy with 60% drawdown is not a good strategy.
-- **Survivorship bias.** Use a proper universe (e.g., S&P 500 historical constituents) not just "current S&P 500".
+- **Survivorship bias.** Use a proper universe (e.g., NSE 500 historical constituents) not just "current Nifty 500".
