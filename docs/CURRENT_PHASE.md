@@ -1,15 +1,15 @@
 # Current Phase
 
-**Active phase:** Phase 1 — Foundation Infrastructure
-**Started:** _(set when you begin)_
-**Target completion:** Week 4
+**Active phase:** Phase 3 — Portfolio + Analytics
+**Started:** 2026-05-20
+**Target completion:** Week 4 from start
 
-See `docs/phases/phase-1.md` for the full task list and acceptance criteria.
+See `docs/phases/phase-2.md` for the full task list and acceptance criteria.
 
 ## Phase rules
 
 - Only work on tasks in the active phase. Do not implement future-phase features.
-- When all Phase 1 tasks are checked off and acceptance criteria pass, update this file to point to Phase 2.
+- When all Phase 2 tasks are checked off and acceptance criteria pass, update this file to point to Phase 3.
 - If a task seems to require something from a future phase, stop and ask the user — usually there's a simpler MVP-appropriate alternative.
 
 ## How to advance
@@ -23,9 +23,9 @@ See `docs/phases/phase-1.md` for the full task list and acceptance criteria.
 
 | # | Phase | Status |
 |---|-------|--------|
-| 1 | Foundation Infrastructure | **active** |
-| 2 | Market Data Platform | pending |
-| 3 | Portfolio + Analytics | pending |
+| 1 | Foundation Infrastructure | **complete** ✓ |
+| 2 | Market Data Platform | **complete** ✓ |
+| 3 | Portfolio + Analytics | **active** |
 | 4 | ML Prediction Systems | pending |
 | 5 | Backtesting Platform | pending |
 | 6 | AI Research Assistant | pending |
