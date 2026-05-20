@@ -199,7 +199,7 @@ class TestGetCandles:
         assert res.status_code == 404
 
     def test_invalid_timeframe_returns_422(self, client: TestClient) -> None:
-        res = client.get("/api/v1/market/candles?symbol=AAPL&timeframe=3d")
+        res = client.get("/api/v1/market/candles?symbol=RELIANCE&timeframe=3d")
         assert res.status_code == 422
 
     def test_returns_candles_ascending(self, client: TestClient) -> None:
@@ -224,7 +224,7 @@ class TestGetCandles:
             yield db
         app.dependency_overrides[get_db] = _get_db_override
 
-        res = client.get("/api/v1/market/candles?symbol=AAPL&timeframe=1d")
+        res = client.get("/api/v1/market/candles?symbol=RELIANCE&timeframe=1d")
         app.dependency_overrides.pop(get_db, None)
 
         assert res.status_code == 200
@@ -277,7 +277,7 @@ class TestGetPrice:
         app.dependency_overrides[get_db] = _get_db_override
 
         with patch("app.api.v1.price.get_redis", return_value=mock_redis):
-            res = client.get("/api/v1/market/price/AAPL")
+            res = client.get("/api/v1/market/price/RELIANCE")
 
         app.dependency_overrides.pop(get_db, None)
         assert res.status_code == 200
@@ -305,7 +305,7 @@ class TestGetPrice:
         app.dependency_overrides[get_db] = _get_db_override
 
         with patch("app.api.v1.price.get_redis", return_value=mock_redis):
-            client.get("/api/v1/market/price/AAPL")
+            client.get("/api/v1/market/price/RELIANCE")
 
         app.dependency_overrides.pop(get_db, None)
         mock_redis.set.assert_awaited_once()
@@ -332,7 +332,7 @@ class TestGetPrice:
         app.dependency_overrides[get_db] = _get_db_override
 
         with patch("app.api.v1.price.get_redis", return_value=mock_redis):
-            res = client.get("/api/v1/market/price/AAPL")
+            res = client.get("/api/v1/market/price/RELIANCE")
 
         app.dependency_overrides.pop(get_db, None)
         assert res.status_code == 404

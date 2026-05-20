@@ -19,7 +19,7 @@ _EQUITY = "equity"
 _CRYPTO = "crypto"
 
 
-def _candle(dt: datetime, symbol: str = "AAPL", timeframe: str = "1d") -> OHLCVCandleSchema:
+def _candle(dt: datetime, symbol: str = "RELIANCE", timeframe: str = "1d") -> OHLCVCandleSchema:
     return OHLCVCandleSchema(
         time=dt,
         symbol=symbol,
@@ -34,7 +34,7 @@ def _candle(dt: datetime, symbol: str = "AAPL", timeframe: str = "1d") -> OHLCVC
 
 
 def _make_asset(
-    symbol: str = "AAPL",
+    symbol: str = "RELIANCE",
     asset_type: str = "equity",
 ) -> MagicMock:
     asset = MagicMock()
@@ -78,25 +78,25 @@ class TestGapThreshold:
 class TestDetectGaps:
     def test_fewer_than_two_candles_returns_zero(self) -> None:
         t = datetime(2024, 1, 2, tzinfo=timezone.utc)
-        assert _detect_gaps([], "1d", "AAPL") == 0
-        assert _detect_gaps([_candle(t)], "1d", "AAPL") == 0
+        assert _detect_gaps([], "1d", "RELIANCE") == 0
+        assert _detect_gaps([_candle(t)], "1d", "RELIANCE") == 0
 
     def test_no_gaps_in_consecutive_daily_candles(self) -> None:
         base = datetime(2024, 1, 2, tzinfo=timezone.utc)
         candles = [_candle(base + timedelta(days=i)) for i in range(5)]
-        assert _detect_gaps(candles, "1d", "AAPL", _EQUITY) == 0
+        assert _detect_gaps(candles, "1d", "RELIANCE", _EQUITY) == 0
 
     def test_detects_daily_gap_exceeding_3x_interval(self) -> None:
         base = datetime(2024, 1, 2, tzinfo=timezone.utc)
         # 4-day gap between candles (threshold = 3 days)
         candles = [_candle(base), _candle(base + timedelta(days=4))]
-        assert _detect_gaps(candles, "1d", "AAPL", _EQUITY) == 1
+        assert _detect_gaps(candles, "1d", "RELIANCE", _EQUITY) == 1
 
     def test_no_false_positive_for_weekend_daily_gap(self) -> None:
         # Friday → Monday = 3-day gap, exactly at threshold → NOT flagged (delta == threshold)
         base = datetime(2024, 1, 5, tzinfo=timezone.utc)  # Friday
         candles = [_candle(base), _candle(base + timedelta(days=3))]
-        gap_count = _detect_gaps(candles, "1d", "AAPL", _EQUITY)
+        gap_count = _detect_gaps(candles, "1d", "RELIANCE", _EQUITY)
         assert gap_count == 0
 
     def test_counts_multiple_gaps(self) -> None:
@@ -107,7 +107,7 @@ class TestDetectGaps:
             _candle(base + timedelta(days=6)),
             _candle(base + timedelta(days=12)),  # gap 2
         ]
-        assert _detect_gaps(candles, "1d", "AAPL", _EQUITY) == 2
+        assert _detect_gaps(candles, "1d", "RELIANCE", _EQUITY) == 2
 
     def test_handles_unsorted_input(self) -> None:
         base = datetime(2024, 1, 2, tzinfo=timezone.utc)
@@ -117,13 +117,13 @@ class TestDetectGaps:
             _candle(base),
         ]
         # 5-day gap → 1 gap detected (threshold for daily equity = 3 days)
-        assert _detect_gaps(candles, "1d", "AAPL", _EQUITY) == 1
+        assert _detect_gaps(candles, "1d", "RELIANCE", _EQUITY) == 1
 
     def test_unknown_timeframe_threshold_zero_skips_check(self) -> None:
         base = datetime(2024, 1, 2, tzinfo=timezone.utc)
         # Timeframe not in _EXPECTED_SECONDS → threshold = 0 → no gap emitted
         candles = [_candle(base), _candle(base + timedelta(days=100))]
-        assert _detect_gaps(candles, "3d", "AAPL", _EQUITY) == 0
+        assert _detect_gaps(candles, "3d", "RELIANCE", _EQUITY) == 0
 
     def test_intraday_equity_tolerates_overnight(self) -> None:
         # 1h candle 16:00 → next day 09:30 = 17.5 h — under the 36 h threshold
@@ -133,7 +133,7 @@ class TestDetectGaps:
             _candle(base, timeframe="1h"),
             _candle(next_open, timeframe="1h"),
         ]
-        assert _detect_gaps(candles, "1h", "AAPL", _EQUITY) == 0
+        assert _detect_gaps(candles, "1h", "RELIANCE", _EQUITY) == 0
 
     def test_intraday_crypto_flags_3h_gap_on_1h_timeframe(self) -> None:
         # 3× expected = 3 h; any gap > 3 h is anomalous for 24/7 crypto

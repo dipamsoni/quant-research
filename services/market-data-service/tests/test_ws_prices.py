@@ -19,7 +19,7 @@ from app.core.config import settings
 from app.main import app
 from app.ws.connection_manager import PriceBus
 
-_TICK = {"type": "tick", "symbol": "AAPL", "price": "220.45", "ts": "2026-05-20T12:00:00Z"}
+_TICK = {"type": "tick", "symbol": "RELIANCE", "price": "2850.45", "ts": "2026-05-20T12:00:00Z"}
 
 
 def _make_token(user_id: str = "test-user-1") -> str:
@@ -58,7 +58,7 @@ async def test_ws_no_auth_rejected():
     """Connection without token must be closed with code 4001."""
     async with _async_client() as client:
         with pytest.raises(Exception):
-            async with aconnect_ws("/ws/prices?symbols=AAPL", client):
+            async with aconnect_ws("/ws/prices?symbols=RELIANCE", client):
                 pass  # server closes before/during accept
 
 
@@ -66,7 +66,7 @@ async def test_ws_invalid_token_rejected():
     """Garbage token must be closed with code 4001."""
     async with _async_client() as client:
         with pytest.raises(Exception):
-            async with aconnect_ws("/ws/prices?symbols=AAPL&token=notavalidjwt", client):
+            async with aconnect_ws("/ws/prices?symbols=RELIANCE&token=notavalidjwt", client):
                 pass
 
 
@@ -75,7 +75,7 @@ async def test_ws_header_auth_accepted():
     token = _make_token()
     async with _async_client() as client:
         async with aconnect_ws(
-            "/ws/prices?symbols=AAPL",
+            "/ws/prices?symbols=RELIANCE",
             client,
             headers={"Authorization": f"Bearer {token}"},
         ) as ws:
@@ -87,7 +87,7 @@ async def test_ws_query_token_accepted():
     """?token= fallback must be accepted (browser WebSocket support)."""
     token = _make_token()
     async with _async_client() as client:
-        async with aconnect_ws(f"/ws/prices?symbols=AAPL&token={token}", client) as ws:
+        async with aconnect_ws(f"/ws/prices?symbols=RELIANCE&token={token}", client) as ws:
             await ws.close()
 
 
@@ -100,12 +100,12 @@ async def test_ws_receives_published_tick(inject_price_bus: PriceBus):
     """Tick published to PriceBus must arrive at subscribed WS client."""
     token = _make_token()
     async with _async_client() as client:
-        async with aconnect_ws(f"/ws/prices?symbols=AAPL&token={token}", client) as ws:
-            inject_price_bus.publish("AAPL", _TICK)
+        async with aconnect_ws(f"/ws/prices?symbols=RELIANCE&token={token}", client) as ws:
+            inject_price_bus.publish("RELIANCE", _TICK)
             raw = await asyncio.wait_for(ws.receive_text(), timeout=2.0)
             msg = json.loads(raw)
             assert msg["type"] == "tick"
-            assert msg["symbol"] == "AAPL"
+            assert msg["symbol"] == "RELIANCE"
             assert msg["price"] == "220.45"
 
 
@@ -113,8 +113,8 @@ async def test_ws_no_tick_for_unsubscribed_symbol(inject_price_bus: PriceBus):
     """Tick for a symbol the client did NOT subscribe to must not arrive."""
     token = _make_token()
     async with _async_client() as client:
-        async with aconnect_ws(f"/ws/prices?symbols=AAPL&token={token}", client) as ws:
-            inject_price_bus.publish("TSLA", _TICK)  # client subscribed only to AAPL
+        async with aconnect_ws(f"/ws/prices?symbols=RELIANCE&token={token}", client) as ws:
+            inject_price_bus.publish("TCS", _TICK)  # client subscribed only to RELIANCE
             with pytest.raises(asyncio.TimeoutError):
                 await asyncio.wait_for(ws.receive_text(), timeout=0.3)
 
@@ -123,16 +123,16 @@ async def test_ws_multi_symbol_subscription(inject_price_bus: PriceBus):
     """Client subscribed to multiple symbols receives ticks for each."""
     token = _make_token()
     async with _async_client() as client:
-        async with aconnect_ws(f"/ws/prices?symbols=AAPL,TSLA&token={token}", client) as ws:
-            inject_price_bus.publish("AAPL", {**_TICK, "symbol": "AAPL"})
-            inject_price_bus.publish("TSLA", {**_TICK, "symbol": "TSLA"})
+        async with aconnect_ws(f"/ws/prices?symbols=RELIANCE,TCS&token={token}", client) as ws:
+            inject_price_bus.publish("RELIANCE", {**_TICK, "symbol": "RELIANCE"})
+            inject_price_bus.publish("TCS", {**_TICK, "symbol": "TCS"})
 
             received = set()
             for _ in range(2):
                 raw = await asyncio.wait_for(ws.receive_text(), timeout=2.0)
                 received.add(json.loads(raw)["symbol"])
 
-            assert received == {"AAPL", "TSLA"}
+            assert received == {"RELIANCE", "TCS"}
 
 
 # ---------------------------------------------------------------------------
@@ -152,7 +152,7 @@ async def test_ws_server_sends_ping(inject_price_bus: PriceBus):
     try:
         token = _make_token()
         async with _async_client() as client:
-            async with aconnect_ws(f"/ws/prices?symbols=AAPL&token={token}", client) as ws:
+            async with aconnect_ws(f"/ws/prices?symbols=RELIANCE&token={token}", client) as ws:
                 raw = await asyncio.wait_for(ws.receive_text(), timeout=2.0)
                 msg = json.loads(raw)
                 assert msg == {"type": "ping"}
@@ -169,22 +169,22 @@ async def test_ws_server_sends_ping(inject_price_bus: PriceBus):
 
 async def test_publish_stamps_seq(inject_price_bus: PriceBus):
     """publish() must add a monotonically increasing 'seq' field to every tick."""
-    inject_price_bus.publish("AAPL", {**_TICK})
-    inject_price_bus.publish("AAPL", {**_TICK})
-    buf = list(inject_price_bus._buffer["AAPL"])
+    inject_price_bus.publish("RELIANCE", {**_TICK})
+    inject_price_bus.publish("RELIANCE", {**_TICK})
+    buf = list(inject_price_bus._buffer["RELIANCE"])
     assert buf[0]["seq"] < buf[1]["seq"]
 
 
 async def test_get_missed_returns_ticks_after_seq(inject_price_bus: PriceBus):
     """get_missed() must only return ticks with seq > since_seq."""
-    inject_price_bus.publish("AAPL", {**_TICK})
-    inject_price_bus.publish("AAPL", {**_TICK})
-    inject_price_bus.publish("AAPL", {**_TICK})
+    inject_price_bus.publish("RELIANCE", {**_TICK})
+    inject_price_bus.publish("RELIANCE", {**_TICK})
+    inject_price_bus.publish("RELIANCE", {**_TICK})
 
-    buf = list(inject_price_bus._buffer["AAPL"])
+    buf = list(inject_price_bus._buffer["RELIANCE"])
     pivot_seq = buf[1]["seq"]  # after second tick
 
-    missed = inject_price_bus.get_missed(["AAPL"], since_seq=pivot_seq)
+    missed = inject_price_bus.get_missed(["RELIANCE"], since_seq=pivot_seq)
     assert len(missed) == 1
     assert missed[0]["seq"] == buf[2]["seq"]
 
@@ -195,15 +195,15 @@ async def test_ws_replays_missed_ticks_on_reconnect(inject_price_bus: PriceBus):
 
     # Publish 3 ticks before client connects.
     for i in range(3):
-        inject_price_bus.publish("AAPL", {**_TICK, "price": str(200 + i)})
+        inject_price_bus.publish("RELIANCE", {**_TICK, "price": str(200 + i)})
 
-    buf = list(inject_price_bus._buffer["AAPL"])
+    buf = list(inject_price_bus._buffer["RELIANCE"])
     # Simulate client last saw seq of first tick.
     last_seen = buf[0]["seq"]
 
     async with _async_client() as client:
         async with aconnect_ws(
-            f"/ws/prices?symbols=AAPL&token={token}&seq={last_seen}", client
+            f"/ws/prices?symbols=RELIANCE&token={token}&seq={last_seen}", client
         ) as ws:
             # Expect 2 replayed ticks (seq > last_seen).
             replayed = []
@@ -221,11 +221,11 @@ async def test_ws_no_replay_without_seq_param(inject_price_bus: PriceBus):
     """Client connecting without ?seq must not receive pre-buffered ticks."""
     token = _make_token()
 
-    inject_price_bus.publish("AAPL", {**_TICK})
-    inject_price_bus.publish("AAPL", {**_TICK})
+    inject_price_bus.publish("RELIANCE", {**_TICK})
+    inject_price_bus.publish("RELIANCE", {**_TICK})
 
     async with _async_client() as client:
-        async with aconnect_ws(f"/ws/prices?symbols=AAPL&token={token}", client) as ws:
+        async with aconnect_ws(f"/ws/prices?symbols=RELIANCE&token={token}", client) as ws:
             with pytest.raises(asyncio.TimeoutError):
                 await asyncio.wait_for(ws.receive_text(), timeout=0.3)
 
@@ -243,7 +243,7 @@ async def test_ws_stale_connection_closed(inject_price_bus: PriceBus):
     try:
         token = _make_token()
         async with _async_client() as client:
-            async with aconnect_ws(f"/ws/prices?symbols=AAPL&token={token}", client) as ws:
+            async with aconnect_ws(f"/ws/prices?symbols=RELIANCE&token={token}", client) as ws:
                 # Receive ping but DON'T reply — wait for server to close
                 await asyncio.wait_for(ws.receive_text(), timeout=2.0)
                 # Server should close with 4008 after pong timeout elapses

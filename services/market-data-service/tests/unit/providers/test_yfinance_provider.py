@@ -54,11 +54,11 @@ class TestYFinanceProvider:
     ) -> None:
         start, end = date_range
         with patch("app.providers.yfinance_provider.yf.download", return_value=_make_df()):
-            candles = await provider.get_historical("AAPL", "1d", start, end)
+            candles = await provider.get_historical("RELIANCE", "1d", start, end)
 
         assert len(candles) == 2
         c = candles[0]
-        assert c.symbol == "AAPL"
+        assert c.symbol == "RELIANCE"
         assert c.timeframe == "1d"
         assert c.open == Decimal("185.0")
         assert c.high == Decimal("187.0")
@@ -76,7 +76,7 @@ class TestYFinanceProvider:
         start, end = date_range
         empty_df = pd.DataFrame(columns=["Open", "High", "Low", "Close", "Volume"])
         with patch("app.providers.yfinance_provider.yf.download", return_value=empty_df):
-            candles = await provider.get_historical("AAPL", "1d", start, end)
+            candles = await provider.get_historical("RELIANCE", "1d", start, end)
         assert candles == []
 
     async def test_unsupported_timeframe_raises(
@@ -84,7 +84,7 @@ class TestYFinanceProvider:
     ) -> None:
         start, end = date_range
         with pytest.raises(ValueError, match="yfinance does not support timeframe '4h'"):
-            await provider.get_historical("AAPL", "4h", start, end)
+            await provider.get_historical("RELIANCE", "4h", start, end)
 
     async def test_tz_naive_index_gets_utc(
         self, provider: YFinanceProvider, date_range: tuple[datetime, datetime]
@@ -94,15 +94,15 @@ class TestYFinanceProvider:
         tz_naive_df = _make_df().copy()
         tz_naive_df.index = tz_naive_df.index.tz_localize(None)
         with patch("app.providers.yfinance_provider.yf.download", return_value=tz_naive_df):
-            candles = await provider.get_historical("AAPL", "1d", start, end)
+            candles = await provider.get_historical("RELIANCE", "1d", start, end)
         assert all(c.time.tzinfo == timezone.utc for c in candles)
 
     def test_multiindex_columns_flattened(self, provider: YFinanceProvider) -> None:
         df = _make_df()
         # Simulate MultiIndex columns as returned by some yfinance versions
         df.columns = pd.MultiIndex.from_tuples(
-            [(col, "AAPL") for col in df.columns], names=["Price", "Ticker"]
+            [(col, "RELIANCE") for col in df.columns], names=["Price", "Ticker"]
         )
-        candles = provider._normalize(df, "AAPL", "1d")
+        candles = provider._normalize(df, "RELIANCE", "1d")
         assert len(candles) == 2
         assert candles[0].open == Decimal("185.0")

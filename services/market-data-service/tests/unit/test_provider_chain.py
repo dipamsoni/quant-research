@@ -13,7 +13,7 @@ _DATE_RANGE = (
 )
 
 
-def _candle(symbol: str = "AAPL") -> OHLCVCandleSchema:
+def _candle(symbol: str = "RELIANCE") -> OHLCVCandleSchema:
     return OHLCVCandleSchema(
         time=datetime(2024, 1, 2, tzinfo=timezone.utc),
         symbol=symbol,
@@ -74,7 +74,7 @@ class TestProviderChainGetHistorical:
         chain = ProviderChain([p1, p2])
 
         start, end = _DATE_RANGE
-        result = await chain.get_historical("AAPL", "1d", start, end)
+        result = await chain.get_historical("RELIANCE", "1d", start, end)
 
         assert result == candles
         p2.get_historical.assert_not_called()
@@ -86,7 +86,7 @@ class TestProviderChainGetHistorical:
         chain = ProviderChain([p1, p2])
 
         start, end = _DATE_RANGE
-        result = await chain.get_historical("AAPL", "1d", start, end)
+        result = await chain.get_historical("RELIANCE", "1d", start, end)
 
         assert result == candles
         p2.get_historical.assert_called_once()
@@ -98,7 +98,7 @@ class TestProviderChainGetHistorical:
         chain = ProviderChain([p1, p2])
 
         start, end = _DATE_RANGE
-        result = await chain.get_historical("AAPL", "1d", start, end)
+        result = await chain.get_historical("RELIANCE", "1d", start, end)
 
         assert result == candles
 
@@ -110,7 +110,7 @@ class TestProviderChainGetHistorical:
 
         start, end = _DATE_RANGE
         with pytest.raises(ConnectionError, match="network down"):
-            await chain.get_historical("AAPL", "1d", start, end)
+            await chain.get_historical("RELIANCE", "1d", start, end)
 
     async def test_all_return_empty_returns_empty_list(self) -> None:
         p1 = _make_provider("primary", result=[])
@@ -118,7 +118,7 @@ class TestProviderChainGetHistorical:
         chain = ProviderChain([p1, p2])
 
         start, end = _DATE_RANGE
-        result = await chain.get_historical("AAPL", "1d", start, end)
+        result = await chain.get_historical("RELIANCE", "1d", start, end)
 
         assert result == []
         # Both providers tried.
@@ -132,19 +132,19 @@ class TestProviderChainGetHistorical:
         chain = ProviderChain([p1, p2])
 
         start, end = _DATE_RANGE
-        result = await chain.get_historical("AAPL", "1m", start, end)
+        result = await chain.get_historical("RELIANCE", "1m", start, end)
 
         assert result == candles
         p1.get_historical.assert_not_called()
         p2.get_historical.assert_called_once()
 
     async def test_single_provider_success(self) -> None:
-        candles = [_candle("TSLA")]
+        candles = [_candle("TCS")]
         p1 = _make_provider("only", result=candles)
         chain = ProviderChain([p1])
 
         start, end = _DATE_RANGE
-        assert await chain.get_historical("TSLA", "1d", start, end) == candles
+        assert await chain.get_historical("TCS", "1d", start, end) == candles
 
     async def test_single_provider_raises_propagates(self) -> None:
         p1 = _make_provider("only", raises=ValueError("bad symbol"))

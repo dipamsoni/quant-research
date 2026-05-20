@@ -19,7 +19,7 @@ from app.pipelines.news_pipeline import (
 from app.providers.finnhub_news_provider import NewsArticleSchema
 
 
-def _article(url: str = "https://example.com/1", symbol: str = "AAPL") -> NewsArticleSchema:
+def _article(url: str = "https://example.com/1", symbol: str = "RELIANCE") -> NewsArticleSchema:
     return NewsArticleSchema(
         title="Test headline",
         content="Body text.",
@@ -42,21 +42,21 @@ class TestGetSetLastIngested:
     async def test_get_returns_none_when_key_missing(self, mock_redis: MagicMock) -> None:
         mock_redis.get.return_value = None
         with patch("app.pipelines.news_pipeline.get_redis", return_value=mock_redis):
-            result = await _get_last_ingested("AAPL")
+            result = await _get_last_ingested("RELIANCE")
         assert result is None
 
     async def test_get_parses_iso_string(self, mock_redis: MagicMock) -> None:
         dt = datetime(2024, 6, 1, 0, 0, tzinfo=timezone.utc)
         mock_redis.get.return_value = dt.isoformat()
         with patch("app.pipelines.news_pipeline.get_redis", return_value=mock_redis):
-            result = await _get_last_ingested("AAPL")
+            result = await _get_last_ingested("RELIANCE")
         assert result == dt
 
     async def test_set_stores_iso_string(self, mock_redis: MagicMock) -> None:
         dt = datetime(2024, 6, 1, 0, 0, tzinfo=timezone.utc)
         with patch("app.pipelines.news_pipeline.get_redis", return_value=mock_redis):
-            await _set_last_ingested("AAPL", dt)
-        mock_redis.set.assert_awaited_once_with("news:last_ingested:AAPL", dt.isoformat())
+            await _set_last_ingested("RELIANCE", dt)
+        mock_redis.set.assert_awaited_once_with("news:last_ingested:RELIANCE", dt.isoformat())
 
 
 class TestIngestNewsForSymbol:
@@ -80,7 +80,7 @@ class TestIngestNewsForSymbol:
             patch("app.pipelines.news_pipeline._upsert_articles", side_effect=_fake_upsert),
         ):
             now_before = datetime.now(tz=timezone.utc)
-            await ingest_news_for_symbol("AAPL", mock_provider)
+            await ingest_news_for_symbol("RELIANCE", mock_provider)
             now_after = datetime.now(tz=timezone.utc)
 
         call_args = mock_provider.get_company_news.call_args
@@ -104,7 +104,7 @@ class TestIngestNewsForSymbol:
             patch("app.pipelines.news_pipeline._set_last_ingested", new=AsyncMock()),
             patch("app.pipelines.news_pipeline._upsert_articles", return_value=1),
         ):
-            await ingest_news_for_symbol("AAPL", mock_provider)
+            await ingest_news_for_symbol("RELIANCE", mock_provider)
 
         call_args = mock_provider.get_company_news.call_args
         from_dt: datetime = call_args[0][1]
@@ -122,7 +122,7 @@ class TestIngestNewsForSymbol:
             patch("app.pipelines.news_pipeline._get_last_ingested", side_effect=_fake_get),
             patch("app.pipelines.news_pipeline._set_last_ingested", new=AsyncMock()),
         ):
-            inserted, rate_limited = await ingest_news_for_symbol("AAPL", mock_provider)
+            inserted, rate_limited = await ingest_news_for_symbol("RELIANCE", mock_provider)
 
         assert inserted == 0
         assert rate_limited is False
@@ -141,7 +141,7 @@ class TestIngestNewsForSymbol:
             patch("app.pipelines.news_pipeline._set_last_ingested", new=AsyncMock()),
             patch("app.pipelines.news_pipeline._upsert_articles", return_value=1),
         ):
-            inserted, rate_limited = await ingest_news_for_symbol("AAPL", mock_provider)
+            inserted, rate_limited = await ingest_news_for_symbol("RELIANCE", mock_provider)
 
         assert inserted == 1
         assert rate_limited is False
