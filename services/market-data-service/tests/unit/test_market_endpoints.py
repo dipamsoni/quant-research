@@ -27,8 +27,8 @@ from app.models.ohlcv import OHLCVCandle
 # ---------------------------------------------------------------------------
 
 def _asset(
-    symbol: str = "AAPL",
-    name: str = "Apple Inc",
+    symbol: str = "RELIANCE",
+    name: str = "Reliance Industries Ltd",
     asset_type: str = "stock",
 ) -> Asset:
     a = Asset()
@@ -36,10 +36,10 @@ def _asset(
     a.symbol = symbol
     a.name = name
     a.asset_type = asset_type
-    a.exchange = "NASDAQ"
-    a.currency = "USD"
-    a.sector = "Technology"
-    a.industry = "Consumer Electronics"
+    a.exchange = "NSE"
+    a.currency = "INR"
+    a.sector = "Energy"
+    a.industry = "Oil & Gas Refining"
     a.is_active = True
     a.created_at = datetime(2024, 1, 1, tzinfo=timezone.utc)
     return a
@@ -101,7 +101,7 @@ def client() -> TestClient:
 
 class TestListAssets:
     def test_returns_assets(self, client: TestClient) -> None:
-        assets = [_asset("AAPL"), _asset("TSLA", "Tesla")]
+        assets = [_asset("RELIANCE"), _asset("TCS", "Tata Consultancy Services")]
         db = _make_db_mock(scalars_return=assets)
         app.dependency_overrides[get_db] = lambda: (x for x in [db])  # type: ignore[assignment]
 
@@ -117,7 +117,7 @@ class TestListAssets:
         assert res.status_code == 200
         data = res.json()["data"]
         assert len(data) == 2
-        assert data[0]["symbol"] == "AAPL"
+        assert data[0]["symbol"] == "RELIANCE"
 
     def test_cursor_pagination(self, client: TestClient) -> None:
         # Returns limit+1 assets → has_more=True, next_cursor set
@@ -172,12 +172,12 @@ class TestGetAsset:
         app.dependency_overrides[get_db] = _get_db_override
 
         with patch("app.api.v1.assets.get_redis", side_effect=RuntimeError("no redis")):
-            res = client.get("/api/v1/market/assets/AAPL")
+            res = client.get("/api/v1/market/assets/RELIANCE")
 
         app.dependency_overrides.pop(get_db, None)
         assert res.status_code == 200
         data = res.json()["data"]
-        assert data["symbol"] == "AAPL"
+        assert data["symbol"] == "RELIANCE"
         assert data["price"] == "185.50"
 
 
@@ -248,11 +248,11 @@ class TestGetPrice:
         mock_redis.get = AsyncMock(return_value=cached)
 
         with patch("app.api.v1.price.get_redis", return_value=mock_redis):
-            res = client.get("/api/v1/market/price/AAPL")
+            res = client.get("/api/v1/market/price/RELIANCE")
 
         assert res.status_code == 200
         data = res.json()["data"]
-        assert data["symbol"] == "AAPL"
+        assert data["symbol"] == "RELIANCE"
         assert data["price"] == "185.50"
 
     def test_falls_back_to_db_on_cache_miss(self, client: TestClient) -> None:

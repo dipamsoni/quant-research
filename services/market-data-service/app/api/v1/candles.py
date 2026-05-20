@@ -25,7 +25,7 @@ _MAX_LIMIT = 2000
 
 @router.get("/candles", response_model=APISuccess[list[CandleResponse]])
 async def get_candles(
-    symbol: Annotated[str, Query(description="Asset symbol, e.g. AAPL")],
+    symbol: Annotated[str, Query(description="Asset symbol, e.g. RELIANCE")],
     timeframe: Annotated[str, Query(description="Candle timeframe")] = "1d",
     start: Annotated[datetime | None, Query()] = None,
     end: Annotated[datetime | None, Query()] = None,

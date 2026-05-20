@@ -19,7 +19,7 @@ _MAX_LIMIT = 100
 
 @router.get("/news", response_model=APISuccess[list[NewsResponse]])
 async def get_news(
-    symbol: Annotated[str, Query(description="Asset symbol, e.g. AAPL")],
+    symbol: Annotated[str, Query(description="Asset symbol, e.g. RELIANCE")],
     limit: Annotated[int, Query(ge=1, le=_MAX_LIMIT)] = 50,
     hours: Annotated[int, Query(ge=1, le=168, description="Look-back window in hours (default 24)")] = 24,
     db: AsyncSession = Depends(get_db),

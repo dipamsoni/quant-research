@@ -1,4 +1,4 @@
-"""WebSocket endpoint: WS /ws/prices?symbols=AAPL,TSLA
+"""WebSocket endpoint: WS /ws/prices?symbols=RELIANCE,TCS
 
 Auth strategy
 -------------
@@ -60,7 +60,7 @@ def _decode_ws_token(websocket: WebSocket, token: str | None) -> dict:
 @router.websocket("/ws/prices")
 async def ws_prices(
     websocket: WebSocket,
-    symbols: str = Query(..., description="Comma-separated symbols, e.g. AAPL,TSLA,BTCUSDT"),
+    symbols: str = Query(..., description="Comma-separated symbols, e.g. RELIANCE,TCS,BTCUSDT"),
     token: str | None = Query(
         None,
         description="JWT bearer token (use when Authorization header is unavailable, e.g. browser WebSocket)",
