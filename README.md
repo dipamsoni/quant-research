@@ -4,9 +4,24 @@ A modular AI-powered quant research and portfolio platform.
 
 ## Status
 
-**Phase 1 — Foundation Infrastructure** (active)
+**Phase 2 — Market Data Platform** (active) · Phase 1 complete ✓
 
 See [`docs/CURRENT_PHASE.md`](docs/CURRENT_PHASE.md) for the active phase and [`docs/INDEX.md`](docs/INDEX.md) for the full project plan.
+
+### Phase 1 verified
+
+| Criterion | Status |
+|-----------|--------|
+| `docker compose up` starts web + api + postgres + redis | ✓ |
+| `http://localhost:3000` dashboard shell with sidebar nav | ✓ |
+| `http://localhost:8000/docs` FastAPI OpenAPI UI | ✓ |
+| Register / login / logout / profile (JWT round-trip) | ✓ |
+| `GET /api/v1/auth/me` protected by JWT | ✓ |
+| `users` + `sessions` tables migrated via Alembic | ✓ |
+| Redis reachable from gateway on startup | ✓ |
+| CI workflow runs lint + typecheck + tests on every PR | ✓ |
+| `.env.example` documents all env vars | ✓ |
+| `README.md` setup instructions | ✓ |
 
 ## What this is
 

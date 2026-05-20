@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(uv run *)",
+      "Bash(uv sync *)",
+      "Bash(docker exec *)",
+      "Bash(find d:/QUANT/services/market-data-service -not -path '*/.venv/*' -not -path '*\\\\\\\\.venv\\\\\\\\*' -type f 2>/dev/null | head -60)",
+      "Read(//d/QUANT/*/.venv/**)",
+      "Bash(find d:/QUANT/services/api-gateway -not -path '*/.venv/*' -not -path '*\\\\\\\\.venv\\\\\\\\*' -type f 2>/dev/null | head -60)",
+      "Bash(.venv/Scripts/uv.exe pip *)",
+      "Bash(.venv/Scripts/pip.exe install *)",
+      "Bash(d:/QUANT/services/market-data-service/.venv/Scripts/uv.exe pip *)",
+      "Bash(d:/QUANT/services/market-data-service/.venv/Scripts/pip.exe install *)",
+      "PowerShell(& \"d:\\\\QUANT\\\\services\\\\market-data-service\\\\.venv\\\\Scripts\\\\pip.exe\" install \"python-jose[cryptography]\")",
+      "PowerShell(Get-ChildItem \"d:\\\\QUANT\\\\services\\\\market-data-service\\\\.venv\\\\Scripts\\\\\" | Where-Object { $_.Name -match \"pip|uv|python\" } | Select-Object Name)",
+      "PowerShell(ls \"d:\\\\QUANT\\\\services\\\\market-data-service\\\\.venv\\\\Scripts\" | Where-Object { $_.Name -match \"python|uv\" } | Select-Object Name)",
+      "Read(//c/Users/sonid/.cargo/bin/**)",
+      "Bash(.venv\\\\Scripts\\\\uv.exe pip *)",
+      "Bash(pnpm typecheck *)",
+      "Bash(pnpm --filter @quant-os/web add lightweight-charts@^4.2.0)",
+      "Bash(pnpm --filter @quant-os/web typecheck)",
+      "Bash(.venv/Scripts/python.exe -m ruff check app/services/indicators.py app/api/v1/candles.py app/schemas/market.py)",
+      "Bash(.venv/Scripts/python.exe -m ruff check app/services/indicators.py app/api/v1/candles.py)",
+      "Bash(.venv/Scripts/python.exe -m ruff check app/schemas/market.py)",
+      "Bash(.venv/Scripts/python.exe -c \"import pandas; print\\(pandas.__version__\\)\")",
+      "Bash(.venv/Scripts/python.exe -c \"import pandas_ta; print\\(pandas_ta.version\\)\")",
+      "Bash(.venv/Scripts/python.exe -m pip install \"pandas-ta>=0.3.14b\")",
+      "Bash(uv add *)"
+    ]
+  }
+}
