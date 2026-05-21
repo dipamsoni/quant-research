@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
     # App
-    APP_NAME: str = "api-gateway"
+    APP_NAME: str = "portfolio-service"
     VERSION: str = "0.1.0"
     ENVIRONMENT: str = "development"
     DEBUG: bool = False
@@ -14,20 +14,20 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/quantos"
 
     # Redis
-    REDIS_URL: str = "redis://localhost:6379/0"
+    REDIS_URL: str = "redis://localhost:6379/2"
 
-    # Auth (wired in task 1.6)
+    # Auth — must match api-gateway JWT_SECRET
     JWT_SECRET: str = "change-me-in-production"
-    JWT_REFRESH_SECRET: str = "change-me-refresh-secret"
     JWT_ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
-    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
 
     # CORS
     CORS_ORIGINS: str = "http://localhost:3000"
 
-    # Downstream services
-    PORTFOLIO_SERVICE_URL: str = "http://localhost:8002"
+    # Internal service URLs
+    MARKET_DATA_SERVICE_URL: str = "http://localhost:8001"
+
+    # Risk metrics
+    RISK_FREE_RATE: float = 0.065  # Indian 10-year G-sec yield; override via env var
     INTERNAL_TOKEN_EXP_SECONDS: int = 300
 
     @property

@@ -4,7 +4,7 @@
 **Started:** 2026-05-20
 **Target completion:** Week 4 from start
 
-See `docs/phases/phase-2.md` for the full task list and acceptance criteria.
+See `docs/phases/phase-3.md` for the full task list and acceptance criteria.
 
 ## Phase rules
 

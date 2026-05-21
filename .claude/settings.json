@@ -25,7 +25,13 @@
       "Bash(.venv/Scripts/python.exe -c \"import pandas; print\\(pandas.__version__\\)\")",
       "Bash(.venv/Scripts/python.exe -c \"import pandas_ta; print\\(pandas_ta.version\\)\")",
       "Bash(.venv/Scripts/python.exe -m pip install \"pandas-ta>=0.3.14b\")",
-      "Bash(uv add *)"
+      "Bash(uv add *)",
+      "Bash(.venv/Scripts/pip install *)",
+      "Bash(uv --version)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); [print\\(k,v\\) for k,v in {**d.get\\('dependencies',{}\\),**d.get\\('devDependencies',{}\\)}.items\\(\\)]\")",
+      "Bash(pnpm --filter @quant-os/web add @tanstack/react-table recharts)",
+      "Bash(pnpm add *)",
+      "PowerShell(if \\(-not $?\\) { \"No components.json found\" })"
     ]
   }
 }

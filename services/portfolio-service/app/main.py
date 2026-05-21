@@ -8,11 +8,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api.v1.auth import router as auth_router
-from app.api.v1.portfolio_proxy import router as portfolio_proxy_router
+from app.api.v1 import router as api_v1_router
 from app.core.config import settings
 from app.core.logging import configure_logging
 from app.core.redis import close_redis, init_redis
+from app.services.snapshot_job import get_scheduler
 
 configure_logging()
 logger = structlog.get_logger()
@@ -20,9 +20,12 @@ logger = structlog.get_logger()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
-    logger.info("startup", environment=settings.ENVIRONMENT, version=settings.VERSION)
     await init_redis()
+    scheduler = get_scheduler()
+    scheduler.start()
+    logger.info("startup", environment=settings.ENVIRONMENT, version=settings.VERSION)
     yield
+    scheduler.shutdown(wait=False)
     await close_redis()
     logger.info("shutdown")
 
@@ -36,6 +39,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.include_router(api_v1_router)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
@@ -43,9 +48,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-app.include_router(auth_router, prefix="/api/v1")
-app.include_router(portfolio_proxy_router)
 
 
 @app.exception_handler(HTTPException)
@@ -61,13 +63,22 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
 async def validation_exception_handler(
     request: Request, exc: RequestValidationError
 ) -> JSONResponse:
+    def _serializable(obj: Any) -> Any:
+        if isinstance(obj, dict):
+            return {k: _serializable(v) for k, v in obj.items()}
+        if isinstance(obj, (list, tuple)):
+            return [_serializable(v) for v in obj]
+        if isinstance(obj, Exception):
+            return str(obj)
+        return obj
+
     return JSONResponse(
         status_code=422,
         content={
             "error": {
                 "code": "VALIDATION_ERROR",
                 "message": "Validation failed",
-                "details": exc.errors(),
+                "details": _serializable(exc.errors()),
             }
         },
     )
